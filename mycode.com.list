@@ -1,0 +1,202 @@
+EMU8086 GENERATED LISTING. MACHINE CODE <- SOURCE.
+ 
+mycode.com -- emu8086 assembler version: 4.08  
+ 
+[ 24.03.2026  --  23:06:53 ] 
+ 
+===================================================================================================
+[LINE]     LOC: MACHINE CODE                          SOURCE
+===================================================================================================
+ 
+[   1]        :                                       
+[   2]        :                                       ; You may customize this and other start-up templates;
+[   3]        :                                       ; The location of this template is c:\emu8086\inc\0_com_template.txt
+[   4]        :                                       
+[   5]        :                                       org 100h
+[   6]        :                                       
+[   7]        :                                       
+[   8]        :                                       ; add your code here
+[   9]    0100: B8 13 00                              mov ax,0013h ;ekranin olusturulmasi
+[  10]    0103: CD 10                                 int 10h
+[  11]        :                                       
+[  12]    0105: B9 1E 00                              mov cx,30d ;c topun x konumu, d topun y konumu
+[  13]    0108: BA 1E 00                              mov dx,30d ;simdilik
+[  14]        :                                       ;-------------------------------------------------
+[  15]    010B:                                       update:
+[  16]    010B: A1 5B 02                              mov ax, newx ;bir onceki updatedeki konum
+[  17]    010E: A3 57 02                              mov oldx, ax ;eski konum degiskenine
+[  18]    0111: A1 5D 02                              mov ax, newy ;yukleniyor
+[  19]    0114: A3 59 02                              mov oldy, ax
+[  20]        :                                       
+[  21]    0117: 8A C2                                 mov al, dl ;y hizinin hesaplanmasi,
+[  22]    0119: B4 00                                 mov ah, 0 ;su anki y konumunun
+[  23]    011B: B3 05                                 mov bl, 5 ;istedigim bir degere bolunmesiyle
+[  24]    011D: F6 F3                                 div bl ;elde ediliyor
+[  25]    011F: B4 00                                 mov ah, 0 ;boylece top yukari cikinca yavaslayip
+[  26]    0121: A3 55 02                              mov yspeed, ax ; zemine yaklastikca hizlaniyor
+[  27]        :                                       
+[  28]    0124: 81 3E 5B 02 36 01                     cmp newx, 310d ;sag ve sol sinirlar
+[  29]    012A: 7F 2F                                 jg toleft ;sag sinir gecilirse top sola doner
+[  30]    012C: 83 3E 5B 02 0A                        cmp newx, 10d
+[  31]    0131: 7C 2F                                 jl toright ;tam tersi
+[  32]        :                                       
+[  33]    0133:                                       xdir:
+[  34]    0133: 80 3E 53 02 00                        cmp xdirval, 0 ;x yonunde hareket,su anki yon degerine gore hareket
+[  35]    0138: 7F 3D                                 jg xbig
+[  36]    013A: 74 42                                 je xsmall
+[  37]        :                                       
+[  38]        :                                       
+[  39]    013C:                                       xafter: ;x hareketi bitti (x konumu belirlendi daha dogrusu)
+[  40]        :                                       
+[  41]    013C: 81 3E 5D 02 BE 00                     cmp newy, 190d ;ust ve asagi sinirlar
+[  42]    0142: 7F 25                                 jg todown
+[  43]    0144: 83 3E 5D 02 0A                        cmp newy, 10d
+[  44]    0149: 7C 25                                 jl toup
+[  45]        :                                       
+[  46]    014B:                                       ydir: ;y yonunde hareket
+[  47]    014B: 80 3E 54 02 00                        cmp ydirval, 0
+[  48]    0150: 7F 33                                 jg ybig
+[  49]    0152: 74 3A                                 je ysmall
+[  50]        :                                       
+[  51]    0154:                                       yafter: ;y hareketi bitti
+[  52]        :                                       
+[  53]        :                                       
+[  54]    0154: E9 9F 00                              jmp erase
+[  55]    0157:                                       eraseend:
+[  56]    0157: EB 3E                                 jmp draw
+[  57]    0159:                                       drawend:
+[  58]    0159: EB B0                                 jmp update ;update tekrar doner
+[  59]        :                                       ;--------------------------------------
+[  60]    015B:                                       toleft: ;sola donme
+[  61]    015B: C6 06 53 02 01                        mov xdirval, 1 ;yeni yon
+[  62]    0160: EB D1                                 jmp xdir ;yeni yon belirlendikten sonra x hareket fonk.a gidilir
+[  63]    0162:                                       toright: ;saga donme
+[  64]    0162: C6 06 53 02 00                        mov xdirval, 0
+[  65]    0167: EB CA                                 jmp xdir ;bir onceki fonk.un aynisi
+[  66]    0169:                                       todown: ;asagi d.
+[  67]    0169: C6 06 54 02 01                        mov ydirval, 1
+[  68]    016E: EB DB                                 jmp ydir ;Ayni
+[  69]    0170:                                       toup: ;yukari d.
+[  70]    0170: C6 06 54 02 00                        mov ydirval, 0
+[  71]    0175: EB D4                                 jmp ydir ;ayni
+[  72]    0177:                                       xbig: ;isim alakasiz biraz ama x konumunun guncellenmesi
+[  73]    0177: 83 2E 5B 02 03                        sub newx, 3 ;3 istedigim x hizi
+[  74]    017C: EB BE                                 jmp xafter ;x hareketi biter
+[  75]    017E:                                       xsmall:   ;aynisi
+[  76]    017E: 83 06 5B 02 03                        add newx, 3
+[  77]    0183: EB B7                                 jmp xafter
+[  78]    0185:                                       ybig:            ;aynisi y icin
+[  79]    0185: A1 55 02                              mov ax, yspeed
+[  80]    0188: 29 06 5D 02                           sub newy, ax
+[  81]    018C: EB C6                                 jmp yafter
+[  82]    018E:                                       ysmall:                        ;bu da ayni
+[  83]    018E: A1 55 02                              mov ax, yspeed
+[  84]    0191: 01 06 5D 02                           add newy, ax
+[  85]    0195: EB BD                                 jmp yafter
+[  86]        :                                       ;---------------------------------------
+[  87]    0197:                                       draw:
+[  88]    0197: B9 19 00                              mov cx, 25 ;dongu adedi
+[  89]    019A:                                       drawloop:
+[  90]    019A: C6 06 78 02 19                        mov ind, 25
+[  91]    019F: 28 0E 78 02                           sub ind, cl ;dizi elemani indisi
+[  92]        :                                       
+[  93]    01A3: B4 00                                 mov ah, 0
+[  94]    01A5: A0 78 02                              mov al, ind
+[  95]    01A8: 05 05 00                              add ax, 5
+[  96]    01AB: BB 05 00                              mov bx, 5
+[  97]    01AE: F6 F3                                 div bl
+[  98]    01B0: FE C8                                 dec al
+[  99]        :                                       
+[ 100]    01B2: B7 00                                 mov bh, 0 ;x ve y cizim konumlarinin olusturulmasinda ilk adim
+[ 101]    01B4: 8A DC                                 mov bl, ah
+[ 102]    01B6: 89 1E 79 02                           mov xdrawval, bx
+[ 103]    01BA: B7 00                                 mov bh, 0
+[ 104]    01BC: 8A D8                                 mov bl, al
+[ 105]    01BE: 89 1E 7B 02                           mov ydrawval, bx
+[ 106]        :                                       
+[ 107]    01C2: B7 00                                 mov bh, 0
+[ 108]    01C4: 8A 1E 78 02                           mov bl, ind
+[ 109]    01C8: BE 5F 02                              lea si, ball
+[ 110]    01CB: 8A 00                                 mov al, [bx+si] ;top dizisinden deger alinir
+[ 111]    01CD: 8B 1E 5B 02                           mov bx, newx
+[ 112]    01D1: 01 1E 79 02                           add xdrawval, bx
+[ 113]    01D5: 8B 1E 5D 02                           mov bx, newy
+[ 114]    01D9: 01 1E 7B 02                           add ydrawval, bx
+[ 115]    01DD: 8B 0E 79 02                           mov cx, xdrawval
+[ 116]    01E1: 8B 16 7B 02                           mov dx, ydrawval
+[ 117]    01E5: B4 0C                                 mov ah,0ch ;kirmizi
+[ 118]    01E7: CD 10                                 int 10h ;ekran gunc.
+[ 119]        :                                       
+[ 120]    01E9: B5 00                                 mov ch, 0 ;dongu numarasinin restore edilmesi
+[ 121]    01EB: B1 19                                 mov cl, 25
+[ 122]    01ED: 2A 0E 78 02                           sub cl, ind
+[ 123]        :                                       
+[ 124]    01F1: E2 A7                                 loop drawloop
+[ 125]    01F3: E9 63 FF                              jmp drawend
+[ 126]        :                                       ;----------------------------------------
+[ 127]    01F6:                                       erase: ;cizimin aynisi neredeyse sadece newxy yerine oldlar var ve butun renk degerleri siyah
+[ 128]    01F6: B9 19 00                              mov cx, 25 ;dongu adedi
+[ 129]    01F9:                                       eraseloop:
+[ 130]    01F9: C6 06 78 02 19                        mov ind, 25
+[ 131]    01FE: 28 0E 78 02                           sub ind, cl ;dizi elemani indisi
+[ 132]        :                                       
+[ 133]    0202: B4 00                                 mov ah, 0
+[ 134]    0204: A0 78 02                              mov al, ind
+[ 135]    0207: 05 05 00                              add ax, 5
+[ 136]    020A: BB 05 00                              mov bx, 5
+[ 137]    020D: F6 F3                                 div bl
+[ 138]    020F: FE C8                                 dec al
+[ 139]        :                                       
+[ 140]    0211: B7 00                                 mov bh, 0 ;x ve y cizim konumlarinin olusturulmasinda ilk adim
+[ 141]    0213: 8A DC                                 mov bl, ah
+[ 142]    0215: 89 1E 79 02                           mov xdrawval, bx
+[ 143]    0219: B7 00                                 mov bh, 0
+[ 144]    021B: 8A D8                                 mov bl, al
+[ 145]    021D: 89 1E 7B 02                           mov ydrawval, bx
+[ 146]        :                                       
+[ 147]    0221: B7 00                                 mov bh, 0
+[ 148]    0223: 8A 1E 78 02                           mov bl, ind
+[ 149]    0227: B0 00                                 mov al, 00 ;top dizisinden deger alinir
+[ 150]    0229: 8B 1E 57 02                           mov bx, oldx
+[ 151]    022D: 01 1E 79 02                           add xdrawval, bx
+[ 152]    0231: 8B 1E 59 02                           mov bx, oldy
+[ 153]    0235: 01 1E 7B 02                           add ydrawval, bx
+[ 154]    0239: 8B 0E 79 02                           mov cx, xdrawval
+[ 155]    023D: 8B 16 7B 02                           mov dx, ydrawval
+[ 156]    0241: B4 0C                                 mov ah,0ch ;kirmizi
+[ 157]    0243: CD 10                                 int 10h ;ekran gunc.
+[ 158]        :                                       
+[ 159]    0245: B5 00                                 mov ch, 0 ;dongu numarasinin restore edilmesi
+[ 160]    0247: B1 19                                 mov cl, 25
+[ 161]    0249: 2A 0E 78 02                           sub cl, ind
+[ 162]        :                                       
+[ 163]    024D: E2 AA                                 loop eraseloop
+[ 164]    024F: E9 05 FF                              jmp eraseend
+[ 165]        :                                       ;-----------------------------------------
+[ 166]        :                                       
+[ 167]    0252: C3                                    ret ;simdilik program hic bitmiyor
+[ 168]        :                                       
+[ 169]        :                                       ;degiskenler
+[ 170]    0253: 00                                    xdirval db 0 ;topun sol sag yonu
+[ 171]    0254: 00                                    ydirval db 0 ;topun asagi yukari yonu
+[ 172]    0255: 00 00                                 yspeed dw 0 ;topun y hizi
+[ 173]    0257: 00 00                                 oldx dw 0 ;topun eski konumu
+[ 174]    0259: 00 00                                 oldy dw 0 ;top her konumda silinip tekrar
+[ 175]    025B: 00 00                                 newx dw 0 ;cizildiginden eski ve su anki
+[ 176]    025D: 00 00                                 newy dw 0 ;konumun tutulmasi lazim
+[ 177]        :                                       ;ilk satir,         ;ikinci satir,      ;ucuncu satir,      ;dorduncu satir,    ;besinci satir
+[ 178]    025F: 00 0C 0C 0C 00 0C 0C 0C 0F 0C 0C 0C   ball db 00h,0ch,0ch,0ch,00h,0ch,0ch,0ch,0fh,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,00h,0ch,0ch,0ch,00h ;piksel renk degerleri
+                0C 0C 0C 0C 0C 0C 0C 0C 00 0C 0C 0C 
+                00                                  
+[ 179]    0278: 19                                    ind db 25 ;cizim fonk.da kullanilan indis
+[ 180]    0279: 00 00                                 xdrawval dw 0 ;cizim fonk.da kullanilan koordinat degerleri
+[ 181]    027B: 00 00                                 ydrawval dw 0 ;cizim fonk.da kullanilan koordinat degerleri
+[ 182]        :                                       
+ 
+===================================================================================================
+ 
+
+
+
+
+===================================================================================================

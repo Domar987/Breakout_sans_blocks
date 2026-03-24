@@ -1,5 +1,5 @@
 
-; You may customize this and other start-up templates; 
+; You may customize this and other start-up templates;
 ; The location of this template is c:\emu8086\inc\0_com_template.txt
 
 org 100h
@@ -16,7 +16,7 @@ update:
 mov ax, newx ;bir onceki updatedeki konum
 mov oldx, ax ;eski konum degiskenine
 mov ax, newy ;yukleniyor
-mov oldy, ax 
+mov oldy, ax
 
 mov al, dl ;y hizinin hesaplanmasi,
 mov ah, 0 ;su anki y konumunun
@@ -28,14 +28,14 @@ mov yspeed, ax ; zemine yaklastikca hizlaniyor
 cmp newx, 310d ;sag ve sol sinirlar
 jg toleft ;sag sinir gecilirse top sola doner
 cmp newx, 10d
-jl toright ;tam tersi    
-     
+jl toright ;tam tersi
+
 xdir:
 cmp xdirval, 0 ;x yonunde hareket,su anki yon degerine gore hareket
 jg xbig
 je xsmall
-   
-   
+
+
 xafter: ;x hareketi bitti (x konumu belirlendi daha dogrusu)
 
 cmp newy, 190d ;ust ve asagi sinirlar
@@ -49,12 +49,12 @@ jg ybig
 je ysmall
 
 yafter: ;y hareketi bitti
- 
+
 
 jmp erase
 eraseend:
 jmp draw
-drawend: 
+drawend:
 jmp update ;update tekrar doner
 ;--------------------------------------
 toleft: ;sola donme
@@ -62,7 +62,7 @@ mov xdirval, 1 ;yeni yon
 jmp xdir ;yeni yon belirlendikten sonra x hareket fonk.a gidilir
 toright: ;saga donme
 mov xdirval, 0
-jmp xdir ;bir onceki fonk.un aynisi 
+jmp xdir ;bir onceki fonk.un aynisi
 todown: ;asagi d.
 mov ydirval, 1
 jmp ydir ;Ayni
@@ -114,7 +114,7 @@ mov bx, newy
 add ydrawval, bx
 mov cx, xdrawval
 mov dx, ydrawval
-mov ah,0ch ;piksel cizme komutu
+mov ah,0ch ;kirmizi
 int 10h ;ekran gunc.
 
 mov ch, 0 ;dongu numarasinin restore edilmesi
@@ -153,7 +153,7 @@ mov bx, oldy
 add ydrawval, bx
 mov cx, xdrawval
 mov dx, ydrawval
-mov ah,0ch ;piksel cizme komutu
+mov ah,0ch ;kirmizi
 int 10h ;ekran gunc.
 
 mov ch, 0 ;dongu numarasinin restore edilmesi
@@ -174,8 +174,12 @@ oldx dw 0 ;topun eski konumu
 oldy dw 0 ;top her konumda silinip tekrar
 newx dw 0 ;cizildiginden eski ve su anki
 newy dw 0 ;konumun tutulmasi lazim
-       ;ilk satir,         ;ikinci satir,      ;ucuncu satir,      ;dorduncu satir,    ;besinci satir
+;ilk satir,         ;ikinci satir,      ;ucuncu satir,      ;dorduncu satir,    ;besinci satir
 ball db 00h,0ch,0ch,0ch,00h,0ch,0ch,0ch,0fh,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,00h,0ch,0ch,0ch,00h ;piksel renk degerleri
 ind db 25 ;cizim fonk.da kullanilan indis
 xdrawval dw 0 ;cizim fonk.da kullanilan koordinat degerleri
 ydrawval dw 0 ;cizim fonk.da kullanilan koordinat degerleri
+
+
+
+; [SOURCE]: C:\Users\Domar\Documents\GitHub\Breakout_sans_blocks\mycode.asm

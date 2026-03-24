@@ -1,0 +1,38 @@
+< THE SYMBOL TABLE >  mycode.com  --  emu8086 assembler version: 4.08 
+===================================================================================================
+Name                     	Offset    	Size      	Type      	Segment   
+===================================================================================================
+UPDATE                   	0010B     	-1        	LABEL     	(NOSEG)   
+XDIR                     	00133     	-1        	LABEL     	(NOSEG)   
+XAFTER                   	0013C     	-1        	LABEL     	(NOSEG)   
+YDIR                     	0014B     	-1        	LABEL     	(NOSEG)   
+YAFTER                   	00154     	-1        	LABEL     	(NOSEG)   
+ERASEEND                 	00157     	-1        	LABEL     	(NOSEG)   
+DRAWEND                  	00159     	-1        	LABEL     	(NOSEG)   
+TOLEFT                   	0015B     	-1        	LABEL     	(NOSEG)   
+TORIGHT                  	00162     	-1        	LABEL     	(NOSEG)   
+TODOWN                   	00169     	-1        	LABEL     	(NOSEG)   
+TOUP                     	00170     	-1        	LABEL     	(NOSEG)   
+XBIG                     	00177     	-1        	LABEL     	(NOSEG)   
+XSMALL                   	0017E     	-1        	LABEL     	(NOSEG)   
+YBIG                     	00185     	-1        	LABEL     	(NOSEG)   
+YSMALL                   	0018E     	-1        	LABEL     	(NOSEG)   
+DRAW                     	00197     	-1        	LABEL     	(NOSEG)   
+DRAWLOOP                 	0019A     	-1        	LABEL     	(NOSEG)   
+ERASE                    	001F6     	-1        	LABEL     	(NOSEG)   
+ERASELOOP                	001F9     	-1        	LABEL     	(NOSEG)   
+XDIRVAL                  	00253     	1         	VAR       	(NOSEG)   
+YDIRVAL                  	00254     	1         	VAR       	(NOSEG)   
+YSPEED                   	00255     	2         	VAR       	(NOSEG)   
+OLDX                     	00257     	2         	VAR       	(NOSEG)   
+OLDY                     	00259     	2         	VAR       	(NOSEG)   
+NEWX                     	0025B     	2         	VAR       	(NOSEG)   
+NEWY                     	0025D     	2         	VAR       	(NOSEG)   
+BALL                     	0025F     	1         	VAR       	(NOSEG)   
+IND                      	00278     	1         	VAR       	(NOSEG)   
+XDRAWVAL                 	00279     	2         	VAR       	(NOSEG)   
+YDRAWVAL                 	0027B     	2         	VAR       	(NOSEG)   
+===================================================================================================
+[ 24.03.2026  --  23:06:53 ] 
+< END >
+ 
