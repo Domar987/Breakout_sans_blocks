@@ -14,7 +14,7 @@ oldx dw 0 ;topun eski konumu
 oldy dw 0 ;top her konumda silinip tekrar
 newx dw 0 ;cizildiginden eski ve su anki
 newy dw 0 ;konumun tutulmasi lazim
-ball db 00h,00h,0ch,0ch,0ch,00h,01h,0ch,0ch,0ch,0ch,0ch,02h,0ch,0ch,0ch,0ch,0ch,03h,0ch,0ch,0ch,0ch,0ch,04h,00h,0ch,0ch,0ch,00h ;ilk sayi baslangic y degeri,
+ball db 00h,0ch,0ch,0ch,00h,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,00h,0ch,0ch,0ch,00h ;ilk sayi baslangic y degeri,
 ;1,2 vs. sonraki y degeri diger c ve 0lar piksel renk degerleri
 ind db 25 ;cizim fonk.da kullanilan indis
 xdrawval dw 0 ;cizim fonk.da kullanilan koordinat degerleri
@@ -66,12 +66,10 @@ je ysmall
 yafter: ;y hareketi bitti
  
 
-mov cx, oldx ;silinecek eski top
-mov dx, oldy
-mov ax,0c00h ;siyaha cevirilerek silinir
-int 10h ;ekran guncellenir
+jmp erase
+eraseend:
 jmp draw
- 
+drawend: 
 jmp update ;update tekrar doner
 ;--------------------------------------
 toleft: ;sola donme
@@ -115,16 +113,12 @@ div bl
 dec al
 
 mov bh, 0 ;x ve y cizim konumlarinin olusturulmasinda ilk adim
-mov bl, al
+mov bl, ah
 mov xdrawval, bx
 mov bh, 0
-mov bl, ah
+mov bl, al
 mov ydrawval, bx
 
-cmp ah,5 ; indis 0,5,10 vs degilse piksel cizimi yapilir cunku bu indislerdeki elemanlar piksel elemani degil
-jg xdraw
-
-xdraw:
 mov bh, 0
 mov bl, ind
 mov al, ball[si+bx] ;top dizisinden deger alinir
@@ -142,8 +136,47 @@ mov cl, 25
 sub cl, ind
 
 loop drawloop
-jmp update
+jmp drawend
 ;----------------------------------------
+erase: ;cizimin aynisi neredeyse sadece newxy yerine oldlar var ve butun renk degerleri siyah
+mov cx, 25 ;dongu adedi
+eraseloop:
+mov ind, 25
+sub ind, cl ;dizi elemani indisi
+
+mov ah, 0
+mov al, ind
+add ax, 5
+mov bx, 5
+div bl
+dec al
+
+mov bh, 0 ;x ve y cizim konumlarinin olusturulmasinda ilk adim
+mov bl, ah
+mov xdrawval, bx
+mov bh, 0
+mov bl, al
+mov ydrawval, bx
+
+mov bh, 0
+mov bl, ind
+mov al, 00 ;top dizisinden deger alinir
+mov bx, oldx
+add xdrawval, bx
+mov bx, oldy
+add ydrawval, bx
+mov cx, xdrawval
+mov dx, ydrawval
+mov ah,0ch ;kirmizi
+int 10h ;ekran gunc.
+
+mov ch, 0 ;dongu numarasinin restore edilmesi
+mov cl, 25
+sub cl, ind
+
+loop eraseloop
+jmp eraseend
+;-----------------------------------------
 ret ;simdilik program hic bitmiyor
 
 
