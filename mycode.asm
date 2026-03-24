@@ -6,8 +6,6 @@ org 100h
 
 
 ; add your code here
-
-mov ax,0013h ;bu satir atlaniyor neden bilmiyorum 
 mov ax,0013h ;ekranin olusturulmasi
 int 10h
 
@@ -172,11 +170,11 @@ oldx dw 0 ;topun eski konumu
 oldy dw 0 ;top her konumda silinip tekrar
 newx dw 0 ;cizildiginden eski ve su anki
 newy dw 0 ;konumun tutulmasi lazim
-ball db 00h,0ch,0ch,0ch,00h,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,00h,0ch,0ch,0ch,00h ;ilk sayi baslangic y degeri,
-;1,2 vs. sonraki y degeri diger c ve 0lar piksel renk degerleri
+ball db 00h,0ch,0ch,0ch,00h,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,00h,0ch,0ch,0ch,00h ;piksel renk degerleri
 ind db 25 ;cizim fonk.da kullanilan indis
 xdrawval dw 0 ;cizim fonk.da kullanilan koordinat degerleri
 ydrawval dw 0 ;cizim fonk.da kullanilan koordinat degerleri
+
 ret ;simdilik program hic bitmiyor
 
 
