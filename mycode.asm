@@ -106,7 +106,7 @@ mov ydrawval, bx
 
 mov bh, 0
 mov bl, ind
-mov al, ball[si+bx] ;top dizisinden deger alinir
+mov al, ball[bx+si] ;top dizisinden deger alinir
 mov bx, newx
 add xdrawval, bx
 mov bx, newy
@@ -162,6 +162,9 @@ sub cl, ind
 loop eraseloop
 jmp eraseend
 ;-----------------------------------------
+
+ret ;simdilik program hic bitmiyor
+
 ;degiskenler
 xdirval db 0 ;topun sol sag yonu
 ydirval db 0 ;topun asagi yukari yonu
@@ -170,12 +173,11 @@ oldx dw 0 ;topun eski konumu
 oldy dw 0 ;top her konumda silinip tekrar
 newx dw 0 ;cizildiginden eski ve su anki
 newy dw 0 ;konumun tutulmasi lazim
-ball db 00h,0ch,0ch,0ch,00h,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,00h,0ch,0ch,0ch,00h ;piksel renk degerleri
+       ;ilk satir,         ;ikinci satir,      ;ucuncu satir,      ;dorduncu satir,    ;besinci satir
+ball db 00h,0ch,0ch,0ch,00h,0ch,0ch,0ch,0fh,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,00h,0ch,0ch,0ch,00h ;piksel renk degerleri
 ind db 25 ;cizim fonk.da kullanilan indis
 xdrawval dw 0 ;cizim fonk.da kullanilan koordinat degerleri
 ydrawval dw 0 ;cizim fonk.da kullanilan koordinat degerleri
-
-ret ;simdilik program hic bitmiyor
 
 
 
