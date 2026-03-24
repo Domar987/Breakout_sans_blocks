@@ -14,25 +14,41 @@ mov dx,30d
 
 xdirval db 0
 ydirval db 0
+yspeed dw 0
+oldx dw 0
+oldy dw 0
+newx dw 0
+newy dw 0 
+
 update:
-mov ax,0c00h
-int 10h
+mov ax, newx
+mov oldx, ax
+mov ax, newy
+mov oldy, ax 
 
-cmp cx, 90d
+mov al, dl
+mov ah, 0
+mov bl, 5
+div bl
+mov ah, 0
+mov yspeed, ax
+
+cmp newx, 90d
 jg toleft
-cmp cx, 15d
-jl toright
-
+cmp newx, 15d
+jl toright    
+     
 xdir:
 cmp xdirval, 0
 jg xbig
 je xsmall
-
+   
+   
 xafter:
 
-cmp dx, 60d
+cmp newy, 60d
 jg todown
-cmp dx, 10d
+cmp newy, 10d
 jl toup
 
 ydir:
@@ -41,9 +57,18 @@ jg ybig
 je ysmall
 
 yafter:
+ 
 
-mov ax,0c0ch
+mov cx, oldx
+mov dx, oldy
+mov ax,0c00h
 int 10h 
+mov cx, newx
+mov dx, newy
+mov ax,0c0ch
+int 10h
+
+ 
 jmp update
 
 toleft:
@@ -59,16 +84,18 @@ toup:
 mov ydirval, 0
 jmp ydir
 xbig:
-dec cx
+sub newx, 3
 jmp xafter
 xsmall:
-inc cx
+add newx, 3
 jmp xafter
 ybig:
-dec dx
+mov ax, yspeed
+sub newy, ax
 jmp yafter
 ysmall:
-inc dx
+mov ax, yspeed
+add newy, ax
 jmp yafter
 
 ret
