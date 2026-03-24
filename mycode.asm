@@ -6,20 +6,36 @@ org 100h
 
 
 ; add your code here
+
 mov ax,0013h ;ekranin olusturulmasi
 int 10h
 
-mov cx,30d ;c topun x konumu, d topun y konumu
-mov dx,30d ;simdilik
 ;-------------------------------------------------
 update:
+
+;zamanlayici kismi
+mov ah, 00h
+int 1ah
+mov stim, dx ;update basladiginda alinan zaman
+timer:
+mov ah, 00h
+int 1ah
+mov ctim, dx ; zaman sayaci
+mov cx, stim
+sub ctim, cx ; sayac ile baslangic arasindaki fark
+cmp ctim,2 ; istenen degerden fazla sure gecmisse zaman dongusu sona erer
+jg timerend
+jmp timer
+timerend:
+;updatein devami
+
 mov ax, newx ;bir onceki updatedeki konum
 mov oldx, ax ;eski konum degiskenine
 mov ax, newy ;yukleniyor
 mov oldy, ax 
 
-mov al, dl ;y hizinin hesaplanmasi,
-mov ah, 0 ;su anki y konumunun
+mov dx, oldy ;y hizinin hesaplanmasi,
+mov ax, dx;su anki y konumunun  
 mov bl, 5 ;istedigim bir degere bolunmesiyle
 div bl ;elde ediliyor
 mov ah, 0 ;boylece top yukari cikinca yavaslayip
@@ -170,12 +186,15 @@ ret ;simdilik program hic bitmiyor
 xdirval db 0 ;topun sol sag yonu
 ydirval db 0 ;topun asagi yukari yonu
 yspeed dw 0 ;topun y hizi
-oldx dw 0 ;topun eski konumu
-oldy dw 0 ;top her konumda silinip tekrar
-newx dw 0 ;cizildiginden eski ve su anki
-newy dw 0 ;konumun tutulmasi lazim
+oldx dw 10 ;topun eski konumu
+oldy dw 10 ;top her konumda silinip tekrar
+newx dw 10 ;cizildiginden eski ve su anki
+newy dw 10 ;konumun tutulmasi lazim
        ;ilk satir,         ;ikinci satir,      ;ucuncu satir,      ;dorduncu satir,    ;besinci satir
 ball db 00h,0ch,0ch,0ch,00h,0ch,0ch,0ch,0fh,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,00h,0ch,0ch,0ch,00h ;piksel renk degerleri
 ind db 25 ;cizim fonk.da kullanilan indis
 xdrawval dw 0 ;cizim fonk.da kullanilan koordinat degerleri
 ydrawval dw 0 ;cizim fonk.da kullanilan koordinat degerleri
+
+stim dw 0 ;program basladigindaki zamanin lsb kismi cunku zaman hesaplamamizda msb kullanmiyacagiz
+ctim dw 0
