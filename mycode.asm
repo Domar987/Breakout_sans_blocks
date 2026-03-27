@@ -23,7 +23,7 @@ int 1ah
 mov ctim, dx ; zaman sayaci
 mov cx, stim
 sub ctim, cx ; sayac ile baslangic arasindaki fark
-cmp ctim,2 ; istenen degerden fazla sure gecmisse zaman dongusu sona erer
+cmp ctim,0 ; istenen degerden fazla sure gecmisse zaman dongusu sona erer
 jg timerend
 jmp timer
 timerend:
@@ -34,12 +34,15 @@ mov oldx, ax ;eski konum degiskenine
 mov ax, newy ;yukleniyor
 mov oldy, ax 
 
-mov dx, oldy ;y hizinin hesaplanmasi,
-mov ax, dx;su anki y konumunun  
-mov bl, 5 ;istedigim bir degere bolunmesiyle
-div bl ;elde ediliyor
-mov ah, 0 ;boylece top yukari cikinca yavaslayip
-mov yspeed, ax ; zemine yaklastikca hizlaniyor
+;vvv eski y hizi hesabi vvv
+;mov dx, oldy ;y hizinin hesaplanmasi,
+;mov ax, dx;su anki y konumunun  
+;mov bl, 10 ;istedigim bir degere bolunmesiyle
+;div bl ;elde ediliyor
+;mov ah, 0 ;boylece top yukari cikinca yavaslayip
+;mov yspeed, ax ; zemine yaklastikca hizlaniyor
+mov al, xspeed ;yeni y hizi hesabi
+add yspeed, al ;x hizi ayni zamanda zorluk artisina denk
 
 cmp newx, 310d ;sag ve sol sinirlar
 jg toleft ;sag sinir gecilirse top sola doner
@@ -54,15 +57,13 @@ je xsmall
    
 xafter: ;x hareketi bitti (x konumu belirlendi daha dogrusu)
 
-cmp newy, 190d ;ust ve asagi sinirlar
-jg todown
-cmp newy, 10d
-jl toup
-
-ydir: ;y yonunde hareket
-cmp ydirval, 0
-jg ybig
-je ysmall
+;cmp newy, 190d ;ust ve asagi sinirlar
+;jg todown
+;cmp newy, 10d
+;jl toup
+cmp newy,190d
+jg platcheck
+jmp ysmall
 
 yafter: ;y hareketi bitti
  
@@ -79,26 +80,36 @@ jmp xdir ;yeni yon belirlendikten sonra x hareket fonk.a gidilir
 toright: ;saga donme
 mov xdirval, 0
 jmp xdir ;bir onceki fonk.un aynisi 
-todown: ;asagi d.
-mov ydirval, 1
-jmp ydir ;Ayni
-toup: ;yukari d.
-mov ydirval, 0
-jmp ydir ;ayni
+;todown: ;asagi d.
+;mov ydirval, 1
+;jmp ydir ;Ayni
+;toup: ;yukari d.
+;mov ydirval, 0
+;jmp ydir ;ayni
 xbig: ;isim alakasiz biraz ama x konumunun guncellenmesi
-sub newx, 3 ;3 istedigim x hizi
+mov ah, 0
+mov al, xspeed
+sub newx, ax ;artik x hizi degiskene bagli
 jmp xafter ;x hareketi biter
 xsmall:   ;aynisi
-add newx, 3
+mov ah, 0
+mov al, xspeed
+add newx, ax
 jmp xafter
-ybig:            ;aynisi y icin
-mov ax, yspeed
-sub newy, ax
-jmp yafter
+;ybig:            ;aynisi y icin
+;mov ah, 0
+;mov al, yspeed
+;sub newy, ax
+;jmp yafter
 ysmall:                        ;bu da ayni
-mov ax, yspeed
+mov ah, 0
+mov al, yspeed
 add newy, ax
 jmp yafter
+;-------------------------------------
+platcheck:
+
+jmp ysmall
 ;---------------------------------------
 draw:
 mov cx, 25 ;dongu adedi
@@ -185,7 +196,8 @@ ret ;simdilik program hic bitmiyor
 ;degiskenler
 xdirval db 0 ;topun sol sag yonu
 ydirval db 0 ;topun asagi yukari yonu
-yspeed dw 0 ;topun y hizi
+xspeed db 1 ;topun x hizi
+yspeed db 0 ;topun y hizi
 oldx dw 10 ;topun eski konumu
 oldy dw 10 ;top her konumda silinip tekrar
 newx dw 10 ;cizildiginden eski ve su anki
