@@ -9,6 +9,23 @@ org 100h
 
 mov ax,0013h ;ekranin olusturulmasi
 int 10h
+mov ax, 0002h ;fare gizleniyor
+int 33h
+
+;baslangicta kisa sureli dur
+;mov ah, 00h
+;int 1ah
+;mov stim, dx ;update basladiginda alinan zaman 
+;timer1:
+;mov ah, 00h
+;int 1ah
+;mov ctim, dx ; zaman sayaci
+;mov cx, stim
+;sub ctim, cx ; sayac ile baslangic arasindaki fark
+;cmp ctim,180 ; istenen degerden fazla sure gecmisse zaman dongusu sona erer
+;jg timer1end
+;jmp timer1
+;timer1end:
 
 ;-------------------------------------------------
 update:
@@ -28,6 +45,21 @@ jg timerend
 jmp timer
 timerend:
 ;updatein devami
+
+;platform
+mov ax, newplatx
+mov oldplatx, ax
+
+mov ax, 0003h
+int 33h
+mov newplatx, cx
+
+jmp eraseplat
+eraseplatend:
+jmp drawplat
+drawplatend:
+
+;top
 
 mov ax, newx ;bir onceki updatedeki konum
 mov oldx, ax ;eski konum degiskenine
@@ -61,7 +93,7 @@ xafter: ;x hareketi bitti (x konumu belirlendi daha dogrusu)
 ;jg todown
 ;cmp newy, 10d
 ;jl toup
-cmp newy,190d
+cmp newy,184d
 jg platcheck
 jmp ysmall
 
@@ -109,17 +141,25 @@ jmp yafter
 ;-------------------------------------
 platcheck:
 mov cx, newx
-mov dx, newy
+mov dx, platy
 mov ah, 0dh
 int 10h
 cmp al, 0bh
 je yjump
-jg ysmall
-jl ysmall
+jg restart
+jl restart
 yjump:
+mov ah,0
 mov al, yspeed
-mov ah, -1
-imul ah
+neg al
+mov yspeed, al
+mov al, yspeed
+add newy, ax
+jmp yafter
+restart:
+mov newx, 157
+mov newy, 10
+mov al, xspeed
 mov yspeed, al
 jmp ysmall
 ;---------------------------------------
@@ -147,6 +187,8 @@ mov bh, 0
 mov bl, ind
 lea si, ball
 mov al, [bx+si] ;top dizisinden deger alinir
+cmp al, 10h ;10h seffaf piksel olarak kullandigimiz deger burada
+je skipdraw ;seffaf piksel denk gelirse cizim islemi atlanir
 mov bx, newx
 add xdrawval, bx
 mov bx, newy
@@ -154,7 +196,8 @@ add ydrawval, bx
 mov cx, xdrawval
 mov dx, ydrawval
 mov ah,0ch ;piksel cizme komutu
-int 10h ;ekran gunc.
+int 10h ;ekran gunc.  
+skipdraw:
 
 mov ch, 0 ;dongu numarasinin restore edilmesi
 mov cl, 25
@@ -185,6 +228,9 @@ mov ydrawval, bx
 
 mov bh, 0
 mov bl, ind
+mov al, [bx+si] ;top dizisinden deger alinir
+cmp al, 10h ;10h seffaf piksel olarak kullandigimiz deger burada
+je skiperase
 mov al, 00 ;top dizisinden deger alinir
 mov bx, oldx
 add xdrawval, bx
@@ -194,6 +240,7 @@ mov cx, xdrawval
 mov dx, ydrawval
 mov ah,0ch ;piksel cizme komutu
 int 10h ;ekran gunc.
+skiperase:
 
 mov ch, 0 ;dongu numarasinin restore edilmesi
 mov cl, 25
@@ -202,6 +249,80 @@ sub cl, ind
 loop eraseloop
 jmp eraseend
 ;-----------------------------------------
+drawplat:
+mov cx, 60 ;dongu adedi
+drawplatloop:
+mov ind, 60
+sub ind, cl ;dizi elemani indisi
+
+mov ah, 0
+mov al, ind
+add ax, 30
+mov bx, 30
+div bl
+dec al
+
+mov bh, 0 ;x ve y cizim konumlarinin olusturulmasinda ilk adim
+mov bl, ah 
+mov xdrawval, bx
+mov bh, 0
+mov bl, al
+mov ydrawval, bx
+
+mov al, platform ;platform zaten tek renk
+mov bx, newplatx
+add xdrawval, bx
+mov bx, platy
+add ydrawval, bx
+mov cx, xdrawval
+mov dx, ydrawval
+mov ah,0ch ;piksel cizme komutu
+int 10h ;ekran gunc.
+
+mov ch, 0 ;dongu numarasinin restore edilmesi
+mov cl, 60
+sub cl, ind
+
+loop drawplatloop
+jmp drawplatend
+;------------------------------------------
+eraseplat:
+mov cx, 60 ;dongu adedi
+eraseplatloop:
+mov ind, 60
+sub ind, cl ;dizi elemani indisi
+
+mov ah, 0
+mov al, ind
+add ax, 30
+mov bx, 30
+div bl
+dec al
+
+mov bh, 0 ;x ve y cizim konumlarinin olusturulmasinda ilk adim
+mov bl, ah 
+mov xdrawval, bx
+mov bh, 0
+mov bl, al
+mov ydrawval, bx
+
+mov al, 00h
+mov bx, oldplatx
+add xdrawval, bx
+mov bx, platy
+add ydrawval, bx
+mov cx, xdrawval
+mov dx, ydrawval
+mov ah,0ch ;piksel cizme komutu
+int 10h ;ekran gunc.
+
+mov ch, 0 ;dongu numarasinin restore edilmesi
+mov cl, 60
+sub cl, ind
+
+loop eraseplatloop
+jmp eraseplatend
+;------------------------------------------
 
 ret ;simdilik program hic bitmiyor
 
@@ -210,12 +331,16 @@ xdirval db 0 ;topun sol sag yonu
 ydirval db 0 ;topun asagi yukari yonu
 xspeed db 1 ;topun x hizi
 yspeed db 0 ;topun y hizi
-oldx dw 10 ;topun eski konumu
+oldx dw 157 ;topun eski konumu
 oldy dw 10 ;top her konumda silinip tekrar
-newx dw 10 ;cizildiginden eski ve su anki
+newx dw 157 ;cizildiginden eski ve su anki
 newy dw 10 ;konumun tutulmasi lazim
        ;ilk satir,         ;ikinci satir,      ;ucuncu satir,      ;dorduncu satir,    ;besinci satir
-ball db 00h,0ch,0ch,0ch,00h,0ch,0ch,0ch,0fh,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,00h,0ch,0ch,0ch,00h ;piksel renk degerleri
+ball db 10h,0ch,0ch,0ch,10h,0ch,0ch,0ch,0fh,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,10h,0ch,0ch,0ch,10h ;piksel renk degerleri
+
+oldplatx dw 100
+newplatx dw 100
+platy dw 190
 platform db 0bh
 ind db 25 ;cizim fonk.da kullanilan indis
 xdrawval dw 0 ;cizim fonk.da kullanilan koordinat degerleri
