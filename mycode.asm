@@ -53,6 +53,19 @@ mov oldplatx, ax
 mov ax, 0003h
 int 33h
 mov newplatx, cx
+cmp newplatx, 290d
+jg decplatx
+cmp newplatx, 0d
+jl incplatx
+jmp platxafter
+decplatx:
+mov newplatx, 290d
+jmp platxafter
+incplatx:
+mov newplatx, 0d
+jmp platxafter
+
+platxafter:
 
 jmp eraseplat
 eraseplatend:
@@ -73,12 +86,10 @@ mov oldy, ax
 ;div bl ;elde ediliyor
 ;mov ah, 0 ;boylece top yukari cikinca yavaslayip
 ;mov yspeed, ax ; zemine yaklastikca hizlaniyor
-mov al, xspeed ;yeni y hizi hesabi
-add yspeed, al ;x hizi ayni zamanda zorluk artisina denk
 
-cmp newx, 310d ;sag ve sol sinirlar
+cmp newx, 309d ;sag ve sol sinirlar
 jg toleft ;sag sinir gecilirse top sola doner
-cmp newx, 10d
+cmp newx, 11d
 jl toright ;tam tersi    
      
 xdir:
@@ -87,7 +98,22 @@ jg xbig
 je xsmall
    
    
-xafter: ;x hareketi bitti (x konumu belirlendi daha dogrusu)
+xafter: ;x hareketi bitti (x konumu belirlendi daha dogrusu) 
+
+mov al, xspeed ;yeni y hizi hesabi
+cmp yspeed, al
+jl todown
+todownafter:
+cmp ydirval, 0
+jg decspeed
+je incspeed
+decspeed:
+sub yspeed, al
+jmp speedafter
+incspeed:
+add yspeed, al ;x hizi ayni zamanda zorluk artisina denk 
+jmp speedafter
+speedafter:
 
 ;cmp newy, 190d ;ust ve asagi sinirlar
 ;jg todown
@@ -95,8 +121,10 @@ xafter: ;x hareketi bitti (x konumu belirlendi daha dogrusu)
 ;jl toup
 cmp newy,184d
 jg platcheck
-mov ah, 0
-jmp ysmall
+ydir:
+cmp ydirval, 0 ;y yonunde hareket,su anki yon degerine gore hareket
+jg ybig
+je ysmall
 
 yafter: ;y hareketi bitti
  
@@ -108,33 +136,38 @@ drawend:
 jmp update ;update tekrar doner
 ;--------------------------------------
 toleft: ;sola donme
-mov xdirval, 1 ;yeni yon
+mov xdirval, 0 ;yeni yon
 jmp xdir ;yeni yon belirlendikten sonra x hareket fonk.a gidilir
 toright: ;saga donme
-mov xdirval, 0
+mov xdirval, 1
 jmp xdir ;bir onceki fonk.un aynisi 
-;todown: ;asagi d.
-;mov ydirval, 1
-;jmp ydir ;Ayni
-;toup: ;yukari d.
-;mov ydirval, 0
-;jmp ydir ;ayni
+todown: ;asagi d.
+mov ydirval, 0
+jmp todownafter ;Ayni
+toup: ;yukari d.
+mov al, xspeed
+mov ah, 10h
+mul ah
+mov yspeed, al
+mov ydirval, 1
+jmp ydir ;ayni
 xbig: ;isim alakasiz biraz ama x konumunun guncellenmesi
 mov ah, 0
 mov al, xspeed
-sub newx, ax ;artik x hizi degiskene bagli
+add newx, ax ;artik x hizi degiskene bagli
 jmp xafter ;x hareketi biter
 xsmall:   ;aynisi
 mov ah, 0
 mov al, xspeed
-add newx, ax
+sub newx, ax
 jmp xafter
-;ybig:            ;aynisi y icin
-;mov ah, 0
-;mov al, yspeed
-;sub newy, ax
-;jmp yafter
+ybig:            ;aynisi y icin
+mov ah, 0
+mov al, yspeed
+sub newy, ax
+jmp yafter
 ysmall:
+mov ah, 0
 mov al, yspeed
 add newy, ax
 jmp yafter
@@ -145,19 +178,7 @@ mov dx, platy
 mov ah, 0dh
 int 10h
 cmp al, 0bh
-je yjump
-jg restart
-jl restart
-yjump:
-mov ah,0
-mov al, yspeed
-neg ax
-mov yspeed, al
-lahf
-dec ah
-sahf
-jmp ysmall
-restart:
+je toup
 mov newx, 157
 mov newy, 10
 mov al, xspeed
@@ -332,11 +353,12 @@ ret ;simdilik program hic bitmiyor
 xdirval db 0 ;topun sol sag yonu
 ydirval db 0 ;topun asagi yukari yonu
 xspeed db 1 ;topun x hizi
-yspeed db 0 ;topun y hizi
+yspeed db 1 ;topun y hizi
 oldx dw 157 ;topun eski konumu
 oldy dw 10 ;top her konumda silinip tekrar
 newx dw 157 ;cizildiginden eski ve su anki
 newy dw 10 ;konumun tutulmasi lazim
+
        ;ilk satir,         ;ikinci satir,      ;ucuncu satir,      ;dorduncu satir,    ;besinci satir
 ball db 10h,0ch,0ch,0ch,10h,0ch,0ch,0ch,0fh,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,0ch,10h,0ch,0ch,0ch,10h ;piksel renk degerleri
 
