@@ -372,3 +372,5 @@ ydrawval dw 0 ;cizim fonk.da kullanilan koordinat degerleri
 
 stim dw 0 ;program basladigindaki zamanin lsb kismi cunku zaman hesaplamamizda msb kullanmiyacagiz
 ctim dw 0
+
+title db ?
