@@ -95,6 +95,7 @@ xafter: ;x hareketi bitti (x konumu belirlendi daha dogrusu)
 ;jl toup
 cmp newy,184d
 jg platcheck
+mov ah, 0
 jmp ysmall
 
 yafter: ;y hareketi bitti
@@ -133,8 +134,7 @@ jmp xafter
 ;mov al, yspeed
 ;sub newy, ax
 ;jmp yafter
-ysmall:                        ;bu da ayni
-mov ah, 0
+ysmall:
 mov al, yspeed
 add newy, ax
 jmp yafter
@@ -151,16 +151,18 @@ jl restart
 yjump:
 mov ah,0
 mov al, yspeed
-neg al
+neg ax
 mov yspeed, al
-mov al, yspeed
-add newy, ax
-jmp yafter
+lahf
+dec ah
+sahf
+jmp ysmall
 restart:
 mov newx, 157
 mov newy, 10
 mov al, xspeed
 mov yspeed, al
+mov ah, 0
 jmp ysmall
 ;---------------------------------------
 draw:
