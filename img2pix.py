@@ -2,7 +2,7 @@ from PIL import Image
 
 palim=Image.open("egapalette.png")
 palet=[]
-bytestr=""
+bytestr="db "
 for y in range(0,4):
     for x in range(0,4):
         palet.append(palim.getpixel((x,y)))
@@ -28,8 +28,11 @@ for y in range(0,im.size[1]):
                 bytestr+="h,"
         if istrans:
             bytestr+="0x10h,"
+        if (x+1)%80==0:
+            bytestr=bytestr[:-1]
+            bytestr+="\ndb "
 
-bytestr=bytestr[:-1]
+bytestr=bytestr[:-4]
 print(bytestr)
 
 input()
