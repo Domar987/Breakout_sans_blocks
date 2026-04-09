@@ -119,7 +119,8 @@ speedafter:
 ;cmp newy, 190d ;ust ve asagi sinirlar
 ;jg todown
 ;cmp newy, 10d
-;jl toup
+;jl toup 
+;yspeed+2+y pozisyonu 184'u gecerse yspeed'i 184 - y pozisyonu yap bu yorum sonra buraya bunu eklemem icin
 cmp newy,184d
 jg platcheck
 ydir:
@@ -183,6 +184,7 @@ mov ah, 0dh
 int 10h
 cmp al, 0bh
 je successful
+mov hitcounter, 0
 mov newx, 157
 mov newy, 10
 mov al, xspeed
