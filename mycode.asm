@@ -27,6 +27,8 @@ erasetitleend:
 
 ;-------------------------------------------------
 update:
+cmp hp, 0
+je drawloser
 
 ;zamanlayici kismi
 mov ah, 00h
@@ -43,8 +45,6 @@ jg timerend
 jmp timer
 timerend:
 ;updatein devami
-cmp hp, 0
-je drawloser
 
 ;platform
 mov ax, newplatx
@@ -484,7 +484,7 @@ int 10h ;ekran gunc.
 skiploserdraw:
 
 ;mov ch, 0 ;dongu numarasinin restore edilmesi
-mov cx, 5120
+mov cx, 1584
 sub cx, ind
 
 loop drawloserloop
@@ -505,8 +505,38 @@ cmp ctim,90 ; istenen degerden fazla sure gecmisse zaman dongusu sona erer
 jg timergameoverend
 jmp timergameover
 timergameoverend:
+;mov cx, 64000 ;dongu adedi
+;wipe:
+;mov ind, 64000
+;sub ind, cx ;dizi elemani indisi
 
-ret ;simdilik program hic bitmiyor
+;mov ax, ind
+;add ax, 320
+;mov bx, 320
+;div bl
+;dec al
+
+;mov bh, 0 ;x ve y cizim konumlarinin olusturulmasinda ilk adim
+;mov bl, ah
+;mov xdrawval, bx
+;mov bh, 0
+;mov bl, al
+;mov ydrawval, bx
+
+;mov al, 0 ;top dizisinden deger alinir
+;mov cx, xdrawval
+;mov dx, ydrawval
+;mov ah,0ch ;piksel cizme komutu
+;int 10h ;ekran gunc.  
+
+;mov cx, 64000
+;sub cx, ind
+
+;loop wipe
+
+ret
+;mov ax, 4c01h
+;int 20h
 
 ;degiskenler
 hp db 3 ;can
