@@ -25,6 +25,55 @@ timer1end:
 jmp erasetitle
 erasetitleend:
 
+;kalplerin cizimi baslangic icin
+mov ah, 0
+mov al, hp
+mov cx, 49 ;dongu adedi
+bdrawheartouterloop:
+push ax
+bdrawheartloop:
+mov ind, 49
+sub ind, cx ;dizi elemani indisi
+
+mov ax, ind
+add ax, 7
+mov bx, 7
+div bl
+dec al
+
+mov bh, 0 ;x ve y cizim konumlarinin olusturulmasinda ilk adim
+mov bl, ah
+mov xdrawval, bx
+mov bh, 0
+mov bl, al
+mov ydrawval, bx
+
+pop bx
+add xdrawval, bx
+push bx
+
+mov bx, ind
+lea si, heart
+mov al, [bx+si] ;top dizisinden deger alinir
+cmp al, 10h ;10h seffaf piksel olarak kullandigimiz deger burada
+je bskipdrawheart ;seffaf piksel denk gelirse cizim islemi atlanir
+mov cx, xdrawval
+mov dx, ydrawval
+mov ah,0ch ;piksel cizme komutu
+int 10h ;ekran gunc.  
+bskipdrawheart:
+
+;dongu numarasinin restore edilmesi
+mov cx, 49
+sub cx, ind
+
+loop bdrawheartloop
+pop ax
+dec ax
+cmp ax,0
+je update
+jmp bdrawheartouterloop
+
 ;-------------------------------------------------
 update:
 cmp hp, 0
@@ -187,8 +236,12 @@ mov ah, 0dh
 int 10h
 cmp al, 0bh
 je successful
-mov hitcounter, 0 
+mov hitcounter, 0
+jmp eraseheart
+eraseheartend: 
 dec hp
+jmp drawheart
+drawheartend:
 mov newx, 157
 mov newy, 10
 mov xspeed, 2
@@ -212,7 +265,61 @@ decplat:
 mov hitcounter, 0
 sub platwidth, 5
 jmp toup
+
+
+gameover:
+mov ah, 00h
+int 1ah
+mov stim, dx ;update basladiginda alinan zaman
+timergameover:
+mov ah, 00h
+int 1ah
+mov ctim, dx ; zaman sayaci
+mov cx, stim
+sub ctim, cx ; sayac ile baslangic arasindaki fark
+cmp ctim,90 ; istenen degerden fazla sure gecmisse zaman dongusu sona erer
+jg timergameoverend
+jmp timergameover
+timergameoverend:
+;mov cx, 64000 ;dongu adedi
+;wipe:
+;mov ind, 64000
+;sub ind, cx ;dizi elemani indisi
+
+;mov ax, ind
+;add ax, 320
+;mov bx, 320
+;div bl
+;dec al
+
+;mov bh, 0 ;x ve y cizim konumlarinin olusturulmasinda ilk adim
+;mov bl, ah
+;mov xdrawval, bx
+;mov bh, 0
+;mov bl, al
+;mov ydrawval, bx
+
+;mov al, 0 ;top dizisinden deger alinir
+;mov cx, xdrawval
+;mov dx, ydrawval
+;mov ah,0ch ;piksel cizme komutu
+;int 10h ;ekran gunc.  
+
+;mov cx, 64000
+;sub cx, ind
+
+;loop wipe
+
+ret
+;mov ax, 4c01h
+;int 20h
+
+
+;----------------------------------------
+;CIZIM FONKSIYONLARI
 ;---------------------------------------
+
+
 draw:
 mov cx, 25 ;dongu adedi
 drawloop:
@@ -489,56 +596,113 @@ sub cx, ind
 
 loop drawloserloop
 jmp gameover
+;---------------------------------------
+drawheart:
+mov ah, 0
+mov al, hp
+mov cx, 49 ;dongu adedi
+drawheartouterloop:
+push ax
+drawheartloop:
+mov ind, 49
+sub ind, cx ;dizi elemani indisi
+
+mov ax, ind
+add ax, 7
+mov bx, 7
+div bl
+dec al
+
+mov bh, 0 ;x ve y cizim konumlarinin olusturulmasinda ilk adim
+mov bl, ah
+mov xdrawval, bx
+mov bh, 0
+mov bl, al
+mov ydrawval, bx
+
+pop bx
+add xdrawval, bx
+push bx
+
+mov bx, ind
+lea si, heart
+mov al, [bx+si] ;top dizisinden deger alinir
+cmp al, 10h ;10h seffaf piksel olarak kullandigimiz deger burada
+je skipdrawheart ;seffaf piksel denk gelirse cizim islemi atlanir
+mov cx, xdrawval
+mov dx, ydrawval
+mov ah,0ch ;piksel cizme komutu
+int 10h ;ekran gunc.  
+skipdrawheart:
+
+;dongu numarasinin restore edilmesi
+mov cx, 49
+sub cx, ind
+
+loop drawheartloop
+pop ax
+dec ax
+cmp ax,0
+je drawheartend
+jmp drawheartouterloop
 ;----------------------------------------
+eraseheart:
+mov ah, 0
+mov al, hp
+push ax
+mov cx, 49 ;dongu adedi
+eraseheartouterloop:
+push ax
+eraseheartloop:
+mov ind, 49
+sub ind, cx ;dizi elemani indisi
 
-gameover:
-mov ah, 00h
-int 1ah
-mov stim, dx ;update basladiginda alinan zaman
-timergameover:
-mov ah, 00h
-int 1ah
-mov ctim, dx ; zaman sayaci
-mov cx, stim
-sub ctim, cx ; sayac ile baslangic arasindaki fark
-cmp ctim,90 ; istenen degerden fazla sure gecmisse zaman dongusu sona erer
-jg timergameoverend
-jmp timergameover
-timergameoverend:
-;mov cx, 64000 ;dongu adedi
-;wipe:
-;mov ind, 64000
-;sub ind, cx ;dizi elemani indisi
+mov ax, ind
+add ax, 7
+mov bx, 7
+div bl
+dec al
 
-;mov ax, ind
-;add ax, 320
-;mov bx, 320
-;div bl
-;dec al
+mov bh, 0 ;x ve y cizim konumlarinin olusturulmasinda ilk adim
+mov bl, ah
+mov xdrawval, bx
+mov bh, 0
+mov bl, al
+mov ydrawval, bx
 
-;mov bh, 0 ;x ve y cizim konumlarinin olusturulmasinda ilk adim
-;mov bl, ah
-;mov xdrawval, bx
-;mov bh, 0
-;mov bl, al
-;mov ydrawval, bx
+pop bx
+add xdrawval, bx
+push bx
 
-;mov al, 0 ;top dizisinden deger alinir
-;mov cx, xdrawval
-;mov dx, ydrawval
-;mov ah,0ch ;piksel cizme komutu
-;int 10h ;ekran gunc.  
+mov bx, ind
+lea si, heart
+mov al, 00h ;top dizisinden deger alinir
+cmp al, 10h ;10h seffaf piksel olarak kullandigimiz deger burada
+je skiperaseheart ;seffaf piksel denk gelirse cizim islemi atlanir
+mov cx, xdrawval
+mov dx, ydrawval
+mov ah,0ch ;piksel cizme komutu
+int 10h ;ekran gunc.  
+skiperaseheart:
 
-;mov cx, 64000
-;sub cx, ind
+;dongu numarasinin restore edilmesi
+mov cx, 49
+sub cx, ind
 
-;loop wipe
+loop drawheartloop
+pop ax
+dec ax
+cmp ax,0
+je eraseheartend
+jmp eraseheartouterloop
+;-----------------------------------------
 
-ret
-;mov ax, 4c01h
-;int 20h
 
-;degiskenler
+;----------------------------------------
+;DEGISKENLER
+;-----------------------------------------
+
+
 hp db 3 ;can
 
 
