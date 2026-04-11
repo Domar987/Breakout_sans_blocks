@@ -109,10 +109,11 @@ cmp ydirval, 0
 jg decspeed
 je incspeed
 decspeed:
-sub yspeed, al
+dec yspeed ; ;yukari cikma hizi zorluga bagli degil sadece asagi duserken
 jmp speedafter
 incspeed:
 add yspeed, al ;x hizi ayni zamanda zorluk artisina dogru orantili 
+;inc yspeed
 jmp speedafter
 speedafter:
 
@@ -147,9 +148,9 @@ todown: ;asagi d.
 mov ydirval, 0
 jmp todownafter ;Ayni
 toup: ;yukari d.
-mov al, xspeed
-mov ah, 0
-mov bl, 2
+mov al, 2;xspeed
+mov ah, 0;eskiden xspeedi carpip buluyorduk ama o zaman da yuksek zorluklarda top ucuyordu ekrani uc kere tavaf ediyodu
+mov bl, 2 ;o yuzden maalesef boyle artik
 div bl
 mov ah, 10h
 mul ah
@@ -187,18 +188,21 @@ je successful
 mov hitcounter, 0
 mov newx, 157
 mov newy, 10
+mov xspeed, 2
+mov yspeed, 1
 mov al, xspeed
 mov yspeed, al
 mov ah, 0
 jmp ysmall
 successful:
+mov newy, 184d
 inc hitcounter
-cmp hitcounter, 3
+cmp hitcounter, 5
 je incxspeed
 jl toup
 incxspeed:
 inc xspeed
-cmp hitcounter, 5
+cmp hitcounter, 8
 je decplat
 jl toup
 decplat:
