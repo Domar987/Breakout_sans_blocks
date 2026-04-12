@@ -106,13 +106,17 @@ mov oldplatx, ax
 mov ax, 0003h
 int 33h
 mov newplatx, cx
-cmp newplatx, 290d
+mov bx, 320d
+mov ah, 0
+mov al, platwidth
+sub bx, ax
+cmp newplatx, bx
 jg decplatx
 cmp newplatx, 0d
 jl incplatx
 jmp platxafter
 decplatx:
-mov newplatx, 290d
+mov newplatx, bx
 jmp platxafter
 incplatx:
 mov newplatx, 0d
@@ -178,15 +182,15 @@ speedafter:
 ;jl toup 
 ;yspeed+2+y pozisyonu 184'u gecerse yspeed'i 184 - y pozisyonu yap bu yorum sonra buraya bunu eklemem icin
 ;^bu not gecersiz artik
-cmp newy,184d
-jg platcheck
 ydir:
 cmp ydirval, 0 ;y yonunde hareket,su anki yon degerine gore hareket
 jg ybig
 je ysmall
 
 yafter: ;y hareketi bitti
- 
+       
+cmp newy,184d
+jg platcheck
 
 jmp erase
 eraseend:
@@ -212,7 +216,7 @@ mov ah, 10h
 mul ah
 mov yspeed, al
 mov ydirval, 1
-jmp ydir ;ayni
+jmp erase ;ayni
 xbig: ;isim alakasiz biraz ama x konumunun guncellenmesi
 mov ah, 0
 mov al, xspeed
@@ -248,6 +252,7 @@ mov ah, 0dh
 int 10h
 cmp al, 0bh
 je successful
+
 mov hitcounter, 0
 jmp eraseheart
 eraseheartend: 
@@ -255,6 +260,7 @@ dec hp
 cmp hp, 0
 jg drawheart
 drawheartend:
+mov platwidth, 45
 mov newx, 157
 mov newy, 10
 mov xspeed, 2
@@ -262,11 +268,12 @@ mov yspeed, 1
 mov al, xspeed
 mov yspeed, al
 mov ah, 0
-jmp ysmall
+jmp erase
+
 successful:
-mov newy, 184d
+mov newy, 185d
 inc hitcounter
-cmp hitcounter, 5
+cmp hitcounter, 4
 je incxspeed
 jl toup
 incxspeed:
@@ -324,6 +331,8 @@ timergameoverend:
 ;loop wipe
 
 ;ret
+mov ax,0013h ;ekranin olusturulmasi
+int 10h
 mov ax, 4c01h
 int 20h
 
@@ -416,14 +425,20 @@ loop eraseloop
 jmp eraseend
 ;-----------------------------------------
 drawplat:
-mov cx, 60 ;dongu adedi
+mov al, platwidth
+mov bl, 2
+mul bl
+mov cx, ax ;dongu adedi
 drawplatloop:
-mov ind, 60
+mov al, platwidth
+mov bl, 2
+mul bl
+mov ind, ax
 sub ind, cx ;dizi elemani indisi
 
 mov ax, ind
-add ax, 30
-mov bx, 30
+add al, platwidth
+mov bl, platwidth
 div bl
 dec al
 
@@ -445,21 +460,24 @@ mov ah,0ch ;piksel cizme komutu
 int 10h ;ekran gunc.
 
  ;dongu numarasinin restore edilmesi
-mov cx, 60
+mov al, platwidth
+mov bl, 2
+mul bl
+mov cx, ax
 sub cx, ind
 
 loop drawplatloop
 jmp drawplatend
 ;------------------------------------------
 eraseplat:
-mov cx, 60 ;dongu adedi
+mov cx, 90 ;dongu adedi
 eraseplatloop:
-mov ind, 60
+mov ind, 90
 sub ind, cx ;dizi elemani indisi
 
 mov ax, ind
-add ax, 30
-mov bx, 30
+add al, 45
+mov bl, 45
 div bl
 dec al
 
@@ -481,7 +499,7 @@ mov ah,0ch ;piksel cizme komutu
 int 10h ;ekran gunc.
 
 ;mov ch, 0 ;dongu numarasinin restore edilmesi
-mov cx, 60
+mov cx, 90
 sub cx, ind
 
 loop eraseplatloop
@@ -740,7 +758,7 @@ oldplatx dw 100
 newplatx dw 100
 platy dw 190
 platform db 0bh
-platwidth db 30
+platwidth db 45
 ind dw 25 ;cizim fonk.da kullanilan indis
 xdrawval dw 0 ;cizim fonk.da kullanilan koordinat degerleri
 ydrawval dw 0 ;cizim fonk.da kullanilan koordinat degerleri
