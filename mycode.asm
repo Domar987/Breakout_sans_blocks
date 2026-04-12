@@ -28,8 +28,8 @@ erasetitleend:
 ;kalplerin cizimi baslangic icin
 mov ah, 0
 mov al, hp
-mov cx, 49 ;dongu adedi
 bdrawheartouterloop:
+mov cx, 49 ;dongu adedi
 push ax
 bdrawheartloop:
 mov ind, 49
@@ -600,8 +600,8 @@ jmp gameover
 drawheart:
 mov ah, 0
 mov al, hp
-mov cx, 49 ;dongu adedi
 drawheartouterloop:
+mov cx, 49 ;dongu adedi
 push ax
 drawheartloop:
 mov ind, 49
@@ -650,8 +650,8 @@ eraseheart:
 mov ah, 0
 mov al, hp
 push ax
-mov cx, 49 ;dongu adedi
 eraseheartouterloop:
+mov cx, 49 ;dongu adedi
 push ax
 eraseheartloop:
 mov ind, 49
@@ -689,7 +689,7 @@ skiperaseheart:
 mov cx, 49
 sub cx, ind
 
-loop drawheartloop
+loop eraseheartloop
 pop ax
 dec ax
 cmp ax,0
