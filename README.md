@@ -1,8 +1,9 @@
 Current progress of the game:
 
 
-https://github.com/user-attachments/assets/f3e11bff-595c-4fb1-9396-0e6cb5505d7d
 
-(The end screen and the heart don't work as intended)
+https://github.com/user-attachments/assets/64a68d5c-60c5-4e73-a4a3-7426ad6a9c4c
+
+
 
 Also check out the branch which turns image files to an array of bytes for assembly
