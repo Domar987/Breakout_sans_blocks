@@ -48,9 +48,11 @@ mov bh, 0
 mov bl, al
 mov ydrawval, bx
 
-pop bx
-add xdrawval, bx
-push bx
+pop ax
+push ax
+mov bl,7
+mul bl
+add xdrawval, ax
 
 mov bx, ind
 lea si, heart
@@ -240,7 +242,8 @@ mov hitcounter, 0
 jmp eraseheart
 eraseheartend: 
 dec hp
-jmp drawheart
+cmp hp, 0
+jg drawheart
 drawheartend:
 mov newx, 157
 mov newy, 10
@@ -620,9 +623,11 @@ mov bh, 0
 mov bl, al
 mov ydrawval, bx
 
-pop bx
-add xdrawval, bx
-push bx
+pop ax
+push ax
+mov bl,7
+mul bl
+add xdrawval, ax
 
 mov bx, ind
 lea si, heart
@@ -670,9 +675,11 @@ mov bh, 0
 mov bl, al
 mov ydrawval, bx
 
-pop bx
-add xdrawval, bx
-push bx
+pop ax
+push ax
+mov bl,7
+mul bl
+add xdrawval, ax
 
 mov bx, ind
 lea si, heart
