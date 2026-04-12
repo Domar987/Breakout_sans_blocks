@@ -1,3 +1,5 @@
+name "BreakoutSansBlocks" ;100 yil sonra isim koymak yeni geldi aklima
+
 org 100h
 
 
@@ -50,7 +52,7 @@ mov ydrawval, bx
 
 pop ax
 push ax
-mov bl,7
+mov bl,10
 mul bl
 add xdrawval, ax
 
@@ -175,6 +177,7 @@ speedafter:
 ;cmp newy, 10d
 ;jl toup 
 ;yspeed+2+y pozisyonu 184'u gecerse yspeed'i 184 - y pozisyonu yap bu yorum sonra buraya bunu eklemem icin
+;^bu not gecersiz artik
 cmp newy,184d
 jg platcheck
 ydir:
@@ -233,6 +236,13 @@ jmp yafter
 ;-------------------------------------
 platcheck:
 mov cx, newx
+mov dx, platy
+mov ah, 0dh
+int 10h
+cmp al, 0bh
+je successful
+mov cx, newx
+add cx, 5
 mov dx, platy
 mov ah, 0dh
 int 10h
@@ -313,9 +323,9 @@ timergameoverend:
 
 ;loop wipe
 
-ret
-;mov ax, 4c01h
-;int 20h
+;ret
+mov ax, 4c01h
+int 20h
 
 
 ;----------------------------------------
@@ -625,7 +635,7 @@ mov ydrawval, bx
 
 pop ax
 push ax
-mov bl,7
+mov bl,10
 mul bl
 add xdrawval, ax
 
@@ -677,7 +687,7 @@ mov ydrawval, bx
 
 pop ax
 push ax
-mov bl,7
+mov bl,10
 mul bl
 add xdrawval, ax
 
