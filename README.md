@@ -2,7 +2,8 @@ Current progress of the game:
 
 
 
-https://github.com/user-attachments/assets/64a68d5c-60c5-4e73-a4a3-7426ad6a9c4c
+https://github.com/user-attachments/assets/a266fd2f-f6c1-4891-89f4-4742b6940b89
+
 
 
 
