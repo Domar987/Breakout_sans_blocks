@@ -402,7 +402,8 @@ mov bh, 0
 mov bl, al
 mov ydrawval, bx
 
-mov bx, ind
+mov bx, ind   
+lea si, ball
 mov al, [bx+si] ;top dizisinden deger alinir
 cmp al, 10h ;10h seffaf piksel olarak kullandigimiz deger burada
 je skiperase
