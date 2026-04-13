@@ -1,4 +1,4 @@
-name "BreakoutSansBlocks" ;100 yil sonra isim koymak yeni geldi aklima
+name "Breakout-Sans-Blocks" ;100 yil sonra isim koymak yeni geldi aklima
 
 org 100h
 
@@ -22,6 +22,9 @@ mov cx, stim
 sub ctim, cx ; sayac ile baslangic arasindaki fark
 cmp ctim,180 ; istenen degerden fazla sure gecmisse zaman dongusu sona erer
 jg timer1end
+;in al, 61h   ;ses deneme
+;or al, 3d
+;out 61h, al
 jmp timer1
 timer1end:
 jmp erasetitle
@@ -267,22 +270,41 @@ mov xspeed, 2
 mov yspeed, 1
 mov al, xspeed
 mov yspeed, al
-mov ah, 0
+;mov ah, 0
 jmp erase
 
 successful:
 mov newy, 185d
-inc hitcounter
-cmp hitcounter, 4
-je incxspeed
+inc hitcounter  
+
+cmp hitcounter, 3  ;hitcounter 3'ten buyuk degilse direkt 3'un kati mi diye bakmadan toup'a
 jl toup
+
+mov ah, 0
+mov al, hitcounter  
+mov bl, 3
+div bl
+          
+cmp ah, 0 ;hitler 3'un tam kati oldugu her zaman x hizi artiyor
+je incxspeed
+jg toup
+
 incxspeed:
 inc xspeed
-cmp hitcounter, 8
-je decplat
+
+cmp hitcounter, 5  ;usttekinin aynisi sadece 3 yerine 5
 jl toup
+
+mov ah, 0
+mov al, hitcounter  
+mov bl, 5
+div bl
+  
+cmp ah, 0
+je decplat
+jg toup
 decplat:
-mov hitcounter, 0
+;mov hitcounter, 0
 sub platwidth, 5
 jmp toup
 
