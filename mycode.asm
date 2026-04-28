@@ -287,10 +287,12 @@ div bl
           
 cmp ah, 0 ;hitler 3'un tam kati oldugu her zaman x hizi artiyor
 je incxspeed
-jg toup
+jg hitcmpscnd
 
 incxspeed:
 inc xspeed
+
+hitcmpscnd:
 
 cmp hitcounter, 5  ;usttekinin aynisi sadece 3 yerine 5
 jl toup
